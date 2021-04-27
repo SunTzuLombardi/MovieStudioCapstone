@@ -1,4 +1,4 @@
-![image](./images/image.jpg)
+![image](./images/microsoftbuilding.jpg)
 
 # Microsoft Movie Studio Recommendation
 
