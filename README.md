@@ -1,4 +1,4 @@
-![image](./images/microsoftbuilding.jpg)
+![image](./images/msft_building.jfif)
 
 # Microsoft Movie Studio Recommendation
 
