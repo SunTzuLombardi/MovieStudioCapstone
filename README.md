@@ -2,7 +2,7 @@
 
 # Microsoft Movie Studio Recommendation
 
-**Author**: [Daniel Maxwell Smith](mailto:danielmsmith1@gmail.com)
+**Author**: [Daniel M Smith](mailto:danielmsmith1@gmail.com)
 
 ## Overview
 
