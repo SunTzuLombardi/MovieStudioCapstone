@@ -1,5 +1,5 @@
 
-![msft_building.jfif](attachment:main/images/msft_building.jfif)
+![msft_building.jfif](attachment:./images/msft_building.jfif)
 
 # Microsoft Movie Studio Recommendation
 
@@ -37,13 +37,13 @@ From the Production Budget perspective and WorldWide Gross perspective, recent d
 
 Initial movie data shows that 65% of all movies are not successful.  We looked at the 533 which had an ROI% of >= 150%
 
-![roiBoxplot.png](attachment:/images/roiBoxplot.png)
+![roiBoxplot.png](attachment:./images/roiBoxplot.png)
 
 Average ROI% of all Genres shows Horror,Mystery, and Thriller as top earners.
-![ax4_genre.png](attachment:blob/main/images/ax4_genre.png)
+![ax4_genre.png](attachment:./images/ax4_genre.png)
 
 Excluding movies with MPAA Rating of R or greater shows a differnet pictur and Horror and Drama actually rank the worst.
-![noR_genre.png](attachment:MovieStudioCapstone/images/noR_genre.png)
+![noR_genre.png](attachment:./images/noR_genre.png)
 
 ## Conclusions
 
