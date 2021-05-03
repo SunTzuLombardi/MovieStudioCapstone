@@ -40,7 +40,7 @@ Initial movie data shows that 65% of all movies are not successful.  We looked a
 ![roiBoxplot.png](./images/roiBoxplot.png?raw=true)
 
 Average ROI% of all Genres shows Horror,Mystery, and Thriller as top earners.
-![ax4_genre.png](attachment:./images/ax4_genre.png?raw=true)
+![ax4_genre.png](./images/ax4_genre.png?raw=true)
 
 Excluding movies with MPAA Rating of R or greater shows a differnet pictur and Horror and Drama actually rank the worst.
 ![noR_genre.png](./images/noR_genre.png?raw=true)
