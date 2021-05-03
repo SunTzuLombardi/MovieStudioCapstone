@@ -63,7 +63,7 @@ Empower Studios Portfolio Strategy includes<br>
 
 ## For More Information
 
-See the full analysis in the [Jupyter Notebook](https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/code/eda_notebook.ipynb) or review this [presentation](https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/presentation.pdf)
+See the full analysis in the [Jupyter Notebook](https://github.com/SunTzuLombardi/MovieStudioProject/blob/main/code/eda_notebook.ipynb) or review this [presentation](https://github.com/SunTzuLombardi/MovieStudioProject/blob/main/presentation.pdf)
 
 For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 
