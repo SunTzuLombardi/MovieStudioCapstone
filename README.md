@@ -8,7 +8,7 @@ Please fill out:
 * Blog post URL: https://danielmsmith1.medium.com/pivot-vs-pivottable-vs-groupby-2d8723beb782
 
 
-![msft_building.jfif](attachment:msft_building.jfif)
+![msft_building.jfif](attachment:images/msft_building.jfif)
 
 # Microsoft Movie Studio Recommendation
 
@@ -49,10 +49,10 @@ Initial movie data shows that 65% of all movies are not successful.  We looked a
 ![roiBoxplot.png](attachment:roiBoxplot.png)
 
 Average ROI% of all Genres shows Horror,Mystery, and Thriller as top earners.
-![ax4_genre.png](attachment:ax4_genre.png)
+![ax4_genre.png](attachment:images/ax4_genre.png)
 
 Excluding movies with MPAA Rating of R or greater shows a differnet pictur and Horror and Drama actually rank the worst.
-![noR_genre.png](attachment:noR_genre.png)
+![noR_genre.png](attachment:images/noR_genre.png)
 
 ## Conclusions
 
