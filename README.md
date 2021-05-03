@@ -8,7 +8,7 @@ Please fill out:
 * Blog post URL: https://danielmsmith1.medium.com/pivot-vs-pivottable-vs-groupby-2d8723beb782
 
 
-![msft_building.jfif](attachment:images/msft_building.jfif)
+![msft_building.jfif](attachment:https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main//images/msft_building.jfif)
 
 # Microsoft Movie Studio Recommendation
 
@@ -46,13 +46,13 @@ From the Production Budget perspective and WorldWide Gross perspective, recent d
 
 Initial movie data shows that 65% of all movies are not successful.  We looked at the 533 which had an ROI% of >= 150%
 
-![roiBoxplot.png](attachment:images/roiBoxplot.png)
+![roiBoxplot.png](attachment:https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/images/roiBoxplot.png)
 
 Average ROI% of all Genres shows Horror,Mystery, and Thriller as top earners.
-![ax4_genre.png](attachment:images/ax4_genre.png)
+![ax4_genre.png](attachment:https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/images/ax4_genre.png)
 
 Excluding movies with MPAA Rating of R or greater shows a differnet pictur and Horror and Drama actually rank the worst.
-![noR_genre.png](attachment:images/noR_genre.png)
+![noR_genre.png](attachment:https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/images/noR_genre.png)
 
 ## Conclusions
 
@@ -80,13 +80,13 @@ For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 
 ├── code<br>
 │   ├── __init__.py<br>
-│   ├── WebScrape_theNumbers.ipynb
-│   ├── initial_load_clean.ipynb
-│   └── eda_notebook.ipynb
-├── data
-├── images
-├── __init__.py
-├── README.md
-├── presentation.pdf
-└── student.ipynb
+│   ├── WebScrape_theNumbers.ipynb<br>
+│   ├── initial_load_clean.ipynb<br>
+│   └── eda_notebook.ipynb<br>
+├── data<br>
+├── images<br>
+├── __init__.py<br>
+├── README.md<br>
+├── presentation.pdf<br>
+└── student.ipynb<br>
 
