@@ -1,0 +1,1072 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Daniel M. Smith Flatiron School"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### WebScraping The-numbers.com\n",
+    "Call Build URL string and input into getdfFromURL to download data fromt TheNumbers Query page.<br>\n",
+    "Can only select 100 per scrape means more queries\n",
+    "## Do Not run all or you will query many times"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T00:15:02.884706Z",
+     "start_time": "2021-05-02T00:14:54.170384Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "from bs4 import BeautifulSoup\n",
+    "import requests\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 710,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T22:35:37.389669Z",
+     "start_time": "2021-05-02T22:35:37.370734Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "def getdffromUrl(url):\n",
+    "    \n",
+    "    html_page = requests.get(url) # Make a get request to retrieve the page\n",
+    "    soup = BeautifulSoup(html_page.content, 'html.parser') # Pass the page contents to beautiful soup for parsing\n",
+    "\n",
+    "    table_container = soup.find('div', id=\"page_filling_chart\")\n",
+    "    table_headers = table_container.findAll('th')\n",
+    "    table_rows = table_container.findAll('tr')\n",
+    "    return parse_table2(table_headers,table_rows)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 711,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T22:37:26.856106Z",
+     "start_time": "2021-05-02T22:37:26.851119Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "#Builds the URL String with inputs on MPAA rating, Min Budget,MaxBudget, Start Year, End Year\n",
+    "def buildurl(rating,minbudget,maxbudget,startyear,endyear):\n",
+    "\n",
+    "    baseurl = 'https://www.the-numbers.com/movies/report/All/All/All/All/'\n",
+    "    midurl = '-(US)/All/All/All/All/'\n",
+    "    endurl = '/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-source=On'\n",
+    "\n",
+    "    url=baseurl + rating + midurl + minbudget +'/'+maxbudget+'/'+startyear+'/'+endyear+endurl\n",
+    "    \n",
+    "    return url\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 508,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T06:31:47.677608Z",
+     "start_time": "2021-05-02T06:31:47.671657Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "#Initial parse_table function\n",
+    "def parse_table(table_headers,table_rows):\n",
+    "\n",
+    "    cells = []\n",
+    "\n",
+    "    movies =[]\n",
+    "    #data = table_rows.findAll('td')\n",
+    "\n",
+    "    for row in table_rows:\n",
+    "        \n",
+    "        if row.text == '':\n",
+    "            cells.append('nan')\n",
+    "        else:\n",
+    "            \n",
+    "            cells.append(row.text)\n",
+    "    \n",
+    "    for i in range(0,int(len(cells)), 5):\n",
+    "\n",
+    "        movie =[]\n",
+    "        movie.append(cells[i])\n",
+    "        movie.append(cells[i+1])\n",
+    "        movie.append(cells[i+2])\n",
+    "        movie.append(cells[i+3])\n",
+    "        movie.append(cells[i+4])\n",
+    "        movies.append(movie)\n",
+    "        \n",
+    "    df = pd.DataFrame(movies, columns=['Index', 'Released', 'Title','ProductionBudget', 'WorldwideBox Office'])\n",
+    "    df.drop(columns='Index',inplace= True)\n",
+    "\n",
+    "    return df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 712,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T22:42:14.946626Z",
+     "start_time": "2021-05-02T22:42:14.940643Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "#Final Parse table from the numbers returns a data frame\n",
+    "def parse_table2(table_headers,table_rows):\n",
+    "\n",
+    "    headers = []\n",
+    "    movies =[]\n",
+    "    \n",
+    "    #create list of headers\n",
+    "    for i in range(0,len(table_headers)):\n",
+    "        headers.append(table_headers[i].get_text())\n",
+    "\n",
+    "    #create list of rows/datacells\n",
+    "    for i in range(1,len(table_rows)):\n",
+    "        tds = table_rows[i].findAll('td')\n",
+    "        movie_dict = {}\n",
+    "        for i in range(0,len(tds)):\n",
+    "            movie_dict[table_headers[i].get_text()] = tds[i].get_text()\n",
+    "        movies.append(movie_dict) \n",
+    "        \n",
+    "    df = pd.DataFrame(movies)\n",
+    "    df.drop(columns=headers[0],inplace= True)\n",
+    "\n",
+    "    return df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 657,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T10:54:16.616563Z",
+     "start_time": "2021-05-02T10:54:16.611576Z"
+    },
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "df_g_rated_2 = parse_table2(table_headers,table_rows)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 658,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T10:54:18.983368Z",
+     "start_time": "2021-05-02T10:54:18.974359Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Released</th>\n",
+       "      <th>Title</th>\n",
+       "      <th>Source</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Feb 11, 2011</td>\n",
+       "      <td>Gnomeo and Juliet</td>\n",
+       "      <td>Based on Play</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Feb 11, 2011</td>\n",
+       "      <td>Justin Bieber: Never Say Never</td>\n",
+       "      <td>Based on Real Life Events</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jul 15, 2011</td>\n",
+       "      <td>Winnie the Pooh</td>\n",
+       "      <td>Based on Fiction Book/Short Story</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Jul 23, 2010</td>\n",
+       "      <td>Ramona and Beezus</td>\n",
+       "      <td>Based on Fiction Book/Short Story</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Feb 17, 2012</td>\n",
+       "      <td>Kari gurashi no Arietti</td>\n",
+       "      <td>Based on Fiction Book/Short Story</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>Dec 13, 2011</td>\n",
+       "      <td>George Balanchine's The Nutcracker</td>\n",
+       "      <td>Based on Ballet</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Oct 21, 2011</td>\n",
+       "      <td>The Mighty Macs</td>\n",
+       "      <td>Based on Real Life Events</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Aug 29, 2012</td>\n",
+       "      <td>The Oogieloves in the BIG Balloon Adv…</td>\n",
+       "      <td>Original Screenplay</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Oct 4, 2011</td>\n",
+       "      <td>La vÃ©ritable histoire du Chat BottÃ©</td>\n",
+       "      <td></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>Dec 31, 2012</td>\n",
+       "      <td>Zambezia</td>\n",
+       "      <td>Original Screenplay</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>Mar 9, 2010</td>\n",
+       "      <td>Hachiko: A Dogâs Story</td>\n",
+       "      <td>Original Screenplay</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>Dec 31, 2010</td>\n",
+       "      <td>Belka i Strelka. Zvezdnye sobaki</td>\n",
+       "      <td>Original Screenplay</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        Released                                   Title  \\\n",
+       "0   Feb 11, 2011                       Gnomeo and Juliet   \n",
+       "1   Feb 11, 2011          Justin Bieber: Never Say Never   \n",
+       "2   Jul 15, 2011                         Winnie the Pooh   \n",
+       "3   Jul 23, 2010                       Ramona and Beezus   \n",
+       "4   Feb 17, 2012                 Kari gurashi no Arietti   \n",
+       "5   Dec 13, 2011      George Balanchine's The Nutcracker   \n",
+       "6   Oct 21, 2011                         The Mighty Macs   \n",
+       "7   Aug 29, 2012  The Oogieloves in the BIG Balloon Adv…   \n",
+       "8    Oct 4, 2011   La vÃ©ritable histoire du Chat BottÃ©   \n",
+       "9   Dec 31, 2012                                Zambezia   \n",
+       "10   Mar 9, 2010                Hachiko: A Dogâs Story   \n",
+       "11  Dec 31, 2010        Belka i Strelka. Zvezdnye sobaki   \n",
+       "\n",
+       "                               Source  \n",
+       "0                       Based on Play  \n",
+       "1           Based on Real Life Events  \n",
+       "2   Based on Fiction Book/Short Story  \n",
+       "3   Based on Fiction Book/Short Story  \n",
+       "4   Based on Fiction Book/Short Story  \n",
+       "5                     Based on Ballet  \n",
+       "6           Based on Real Life Events  \n",
+       "7                 Original Screenplay  \n",
+       "8                                      \n",
+       "9                 Original Screenplay  \n",
+       "10                Original Screenplay  \n",
+       "11                Original Screenplay  "
+      ]
+     },
+     "execution_count": 658,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_g_rated_2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 664,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:11:04.113236Z",
+     "start_time": "2021-05-02T11:11:04.107244Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'https://www.the-numbers.com/movies/report/All/All/All/All/G-(US)/All/All/All/All/2/65/2010/2018/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-source=On'"
+      ]
+     },
+     "execution_count": 664,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "buildurl('G','2','65','2010','2018')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 666,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:17:20.532225Z",
+     "start_time": "2021-05-02T11:17:20.527236Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 667,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:17:44.608813Z",
+     "start_time": "2021-05-02T11:17:43.842258Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "df_G = getdffromUrl(buildurl('G','2','65','2010','2018'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 669,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:19:13.901402Z",
+     "start_time": "2021-05-02T11:19:13.074179Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG_to2014 = getdffromUrl(buildurl('PG','2','65','2010','2014'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 671,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:20:03.787994Z",
+     "start_time": "2021-05-02T11:20:02.977957Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG_to2018  = getdffromUrl(buildurl('PG','2','65','2015','2018'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 672,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:20:53.464584Z",
+     "start_time": "2021-05-02T11:20:52.633459Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2010  = getdffromUrl(buildurl('PG-13','2','65','2010','2010'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 673,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:21:16.502396Z",
+     "start_time": "2021-05-02T11:21:15.324578Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2011  = getdffromUrl(buildurl('PG-13','2','65','2011','2011'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 674,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:22:44.544938Z",
+     "start_time": "2021-05-02T11:22:43.652159Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2012  = getdffromUrl(buildurl('PG-13','2','65','2012','2012'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 675,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:25:43.770234Z",
+     "start_time": "2021-05-02T11:25:42.931661Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2013  = getdffromUrl(buildurl('PG-13','2','65','2013','2013'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 676,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:28:35.227607Z",
+     "start_time": "2021-05-02T11:28:34.330186Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2014  = getdffromUrl(buildurl('PG-13','2','65','2014','2014'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 677,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:28:48.455718Z",
+     "start_time": "2021-05-02T11:28:47.620876Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2015  = getdffromUrl(buildurl('PG-13','2','65','2015','2015'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 678,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:02.080436Z",
+     "start_time": "2021-05-02T11:29:01.315481Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2016  = getdffromUrl(buildurl('PG-13','2','65','2016','2016'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 679,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:12.854182Z",
+     "start_time": "2021-05-02T11:29:11.838495Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2017  = getdffromUrl(buildurl('PG-13','2','65','2017','2017'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 680,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:21.751694Z",
+     "start_time": "2021-05-02T11:29:20.860746Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_PG13_2018  = getdffromUrl(buildurl('PG-13','2','65','2018','2018'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 681,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:25.135152Z",
+     "start_time": "2021-05-02T11:29:24.217608Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2010_1  = getdffromUrl(buildurl('R','2','30','2010','2010'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 682,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:42.319716Z",
+     "start_time": "2021-05-02T11:29:41.282454Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2010_2  = getdffromUrl(buildurl('R','31','65','2010','2010'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 683,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:46.350783Z",
+     "start_time": "2021-05-02T11:29:45.431360Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2011  = getdffromUrl(buildurl('R','2','65','2011','2011'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 684,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:51.317269Z",
+     "start_time": "2021-05-02T11:29:50.265454Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2012  = getdffromUrl(buildurl('R','2','65','2012','2012'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 685,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:29:54.886477Z",
+     "start_time": "2021-05-02T11:29:53.927763Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2013  = getdffromUrl(buildurl('R','2','65','2013','2013'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 686,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:30:00.196783Z",
+     "start_time": "2021-05-02T11:29:59.129730Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2014  = getdffromUrl(buildurl('R','2','65','2014','2014'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 687,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:30:03.249110Z",
+     "start_time": "2021-05-02T11:30:02.284322Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2015  = getdffromUrl(buildurl('R','2','65','2015','2015'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 688,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:30:09.883764Z",
+     "start_time": "2021-05-02T11:30:08.926161Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2016  = getdffromUrl(buildurl('R','2','65','2016','2016'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 689,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:30:14.129131Z",
+     "start_time": "2021-05-02T11:30:13.220388Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2017  = getdffromUrl(buildurl('R','2','65','2017','2017'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 690,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:30:19.222640Z",
+     "start_time": "2021-05-02T11:30:18.250592Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_R_2018  = getdffromUrl(buildurl('R','2','65','2018','2018'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 703,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:47:38.357914Z",
+     "start_time": "2021-05-02T11:47:38.352896Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_all = df_G.append(df_PG_to2014,ignore_index=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 704,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:47:44.803105Z",
+     "start_time": "2021-05-02T11:47:44.799112Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_all = df_all.append(df_PG_to2018,ignore_index=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 705,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:47:47.436473Z",
+     "start_time": "2021-05-02T11:47:47.431486Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_all = df_all.append(df_PG13_2010,ignore_index=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 706,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:47:51.960639Z",
+     "start_time": "2021-05-02T11:47:51.825034Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "    df_all = df_all.append(df_PG13_2011,ignore_index=True)\n",
+    "    df_all = df_all.append(df_PG13_2012,ignore_index=True)\n",
+    "    df_all = df_all.append(df_PG13_2013,ignore_index=True)\n",
+    "    df_all = df_all.append(df_PG13_2014,ignore_index=True)\n",
+    "    df_all = df_all.append(df_PG13_2015,ignore_index=True)\n",
+    "    df_all = df_all.append(df_PG13_2016,ignore_index=True)\n",
+    "    df_all = df_all.append(df_PG13_2017,ignore_index=True)\n",
+    "    df_all = df_all.append(df_PG13_2018,ignore_index=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 707,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:49:32.575930Z",
+     "start_time": "2021-05-02T11:49:32.566952Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "df_all = df_all.append(df_R_2010_1,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2010_2,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2011,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2012,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2013,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2014,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2015,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2016,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2017,ignore_index=True)\n",
+    "df_all = df_all.append(df_R_2018,ignore_index=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 709,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:50:45.428983Z",
+     "start_time": "2021-05-02T11:50:45.419987Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_all.to_csv('../data/tn_moviesource.csv', mode='a', header=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 708,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T11:50:22.714003Z",
+     "start_time": "2021-05-02T11:50:22.704028Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Released</th>\n",
+       "      <th>Title</th>\n",
+       "      <th>Source</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Feb 11, 2011</td>\n",
+       "      <td>Gnomeo and Juliet</td>\n",
+       "      <td>Based on Play</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Feb 11, 2011</td>\n",
+       "      <td>Justin Bieber: Never Say Never</td>\n",
+       "      <td>Based on Real Life Events</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jul 15, 2011</td>\n",
+       "      <td>Winnie the Pooh</td>\n",
+       "      <td>Based on Fiction Book/Short Story</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Jul 23, 2010</td>\n",
+       "      <td>Ramona and Beezus</td>\n",
+       "      <td>Based on Fiction Book/Short Story</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Feb 17, 2012</td>\n",
+       "      <td>Kari gurashi no Arietti</td>\n",
+       "      <td>Based on Fiction Book/Short Story</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1370</th>\n",
+       "      <td>Oct 12, 2018</td>\n",
+       "      <td>The Kindergarten Teacher</td>\n",
+       "      <td>Remake</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1371</th>\n",
+       "      <td>Nov 21, 2018</td>\n",
+       "      <td>Roma</td>\n",
+       "      <td>Based on Real Life Events</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1372</th>\n",
+       "      <td>Dec 13, 2018</td>\n",
+       "      <td>Bird Box</td>\n",
+       "      <td>Based on Fiction Book/Short Story</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1373</th>\n",
+       "      <td>Apr 24, 2018</td>\n",
+       "      <td>Backstabbing For Beginners</td>\n",
+       "      <td>Based on Factual Book/Article</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1374</th>\n",
+       "      <td>Oct 26, 2018</td>\n",
+       "      <td>Air Strike</td>\n",
+       "      <td>Original Screenplay</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>1375 rows × 3 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          Released                           Title  \\\n",
+       "0     Feb 11, 2011               Gnomeo and Juliet   \n",
+       "1     Feb 11, 2011  Justin Bieber: Never Say Never   \n",
+       "2     Jul 15, 2011                 Winnie the Pooh   \n",
+       "3     Jul 23, 2010               Ramona and Beezus   \n",
+       "4     Feb 17, 2012         Kari gurashi no Arietti   \n",
+       "...            ...                             ...   \n",
+       "1370  Oct 12, 2018        The Kindergarten Teacher   \n",
+       "1371  Nov 21, 2018                            Roma   \n",
+       "1372  Dec 13, 2018                        Bird Box   \n",
+       "1373  Apr 24, 2018      Backstabbing For Beginners   \n",
+       "1374  Oct 26, 2018                      Air Strike   \n",
+       "\n",
+       "                                 Source  \n",
+       "0                         Based on Play  \n",
+       "1             Based on Real Life Events  \n",
+       "2     Based on Fiction Book/Short Story  \n",
+       "3     Based on Fiction Book/Short Story  \n",
+       "4     Based on Fiction Book/Short Story  \n",
+       "...                                 ...  \n",
+       "1370                             Remake  \n",
+       "1371          Based on Real Life Events  \n",
+       "1372  Based on Fiction Book/Short Story  \n",
+       "1373      Based on Factual Book/Article  \n",
+       "1374                Original Screenplay  \n",
+       "\n",
+       "[1375 rows x 3 columns]"
+      ]
+     },
+     "execution_count": 708,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_all"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 576,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2021-05-02T06:43:23.638347Z",
+     "start_time": "2021-05-02T06:43:23.633325Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_r_rated_2018.to_csv('../data/tn_mpaa_ratings.csv', mode='a', header=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#The Numbers HOLDIng Cell for Initial URLS\n",
+    "G  2010-2018 'https://www.the-numbers.com/movies/report/All/All/All/All/G-(US)/All/All/All/All/2/65/2010/2019/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-worldwide-box-office=On'\n",
+    "PG 2010-2014 'https://www.the-numbers.com/movies/report/All/All/All/All/PG-(US)/All/All/All/All/2/65/2010/2014/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-worldwide-box-office=On'\n",
+    "PG 2015-2019 'https://www.the-numbers.com/movies/report/All/All/All/All/PG-(US)/All/All/All/All/2/65/2015/2019/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-worldwide-box-office=On'\n",
+    "\n",
+    "PG-13 2010   'https://www.the-numbers.com/movies/report/All/All/All/All/PG-13-(US)/All/All/All/All/2/65/2010/2010/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-worldwide-box-office=On'\n",
+    "PG-13 2011   https://www.the-numbers.com/movies/report/All/All/All/All/PG-13-(US)/All/All/All/All/2/65/2011/2011/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-domestic-box-office=On&show-international-box-office=On&show-worldwide-box-office=On&show-theatrical-distributor=On&show-genre=On&show-source=On\n",
+    "PG-13 2012   https://www.the-numbers.com/movies/report/All/All/All/All/PG-13-(US)/All/All/All/All/2/65/2012/2012/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-domestic-box-office=On&show-international-box-office=On&show-worldwide-box-office=On&show-theatrical-distributor=On&show-genre=On&show-source=On\n",
+    "PG-13 2013\n",
+    "PG-13 2014\n",
+    "PG-13 2015\n",
+    "PG-13 2016\n",
+    "PG-13 2017\n",
+    "PG-13 2018\n",
+    "\n",
+    "R 2010 2m-30 m  https://www.the-numbers.com/movies/report/All/All/All/All/R-(US)/All/All/All/All/2/30/2010/2010/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-domestic-box-office=On&show-international-box-office=On&show-worldwide-box-office=On&show-theatrical-distributor=On&show-genre=On&show-source=On\n",
+    "R 2010 31m-65m  https://www.the-numbers.com/movies/report/All/All/All/All/R-(US)/All/All/All/All/31/65/2010/2010/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-domestic-box-office=On&show-international-box-office=On&show-worldwide-box-office=On&show-theatrical-distributor=On&show-genre=On&show-source=On\n",
+    "R 2011\n",
+    "R 2012\n",
+    "R 2013\n",
+    "R 2014\n",
+    "R 2015\n",
+    "R 2016\n",
+    "R 2017\n",
+    "R 2018 'https://www.the-numbers.com/movies/report/All/All/All/All/R-(US)/All/All/All/All/2/65/2018/2018/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-worldwide-box-office=On'\n",
+    "\n",
+    "\n",
+    "\n",
+    "R 2018 https://www.the-numbers.com/movies/report/All/All/All/All/R-(US)/All/All/All/All/2/65/2018/2018/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-production-budget=On&show-domestic-box-office=On&show-international-box-office=On&show-worldwide-box-office=On&show-theatrical-distributor=On&show-genre=On&show-source=On\n",
+    "\n",
+    "url='https://www.the-numbers.com/movies/report/All/All/All/All/G-(US)/All/All/All/All/2/65/2010/2019/None/None/None/None/None/None?show-release-date=On&view-order-by=domestic-box-office&view-order-direction=desc&show-source=On'\n",
+    "html_page = requests.get(url) # Make a get request to retrieve the page\n",
+    "soup = BeautifulSoup(html_page.content, 'html.parser') # Pass the page contents to beautiful soup for parsing\n",
+    "\n",
+    "table_container = soup.find('div', id=\"page_filling_chart\")\n",
+    "table_headers = table_container.findAll('th')\n",
+    "table_rows = table_container.findAll('tr')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "learn-env",
+   "language": "python",
+   "name": "learn-env"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.5"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": false
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
