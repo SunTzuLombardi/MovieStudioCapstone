@@ -46,7 +46,7 @@ From the Production Budget perspective and WorldWide Gross perspective, recent d
 
 Initial movie data shows that 65% of all movies are not successful.  We looked at the 533 which had an ROI% of >= 150%
 
-![roiBoxplot.png](attachment:roiBoxplot.png)
+![roiBoxplot.png](attachment:images/roiBoxplot.png)
 
 Average ROI% of all Genres shows Horror,Mystery, and Thriller as top earners.
 ![ax4_genre.png](attachment:images/ax4_genre.png)
