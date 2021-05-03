@@ -1,5 +1,5 @@
 
-[msft_building.jfif](./images/msft_building.jfif)
+[msft_building.jfif](https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/images/msft_building.jfif)
 
 # Microsoft Movie Studio Recommendation
 
