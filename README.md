@@ -78,8 +78,8 @@ For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 
 ## Repository Structure
 
-├── code
-│   ├── __init__.py
+├── code<br>
+│   ├── __init__.py<br>
 │   ├── WebScrape_theNumbers.ipynb
 │   ├── initial_load_clean.ipynb
 │   └── eda_notebook.ipynb
@@ -90,12 +90,3 @@ For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 ├── presentation.pdf
 └── student.ipynb
 
-
-```python
-
-```
-
-
-```python
-
-```
