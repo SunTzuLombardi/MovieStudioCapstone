@@ -1,73 +1,101 @@
-![image](./images/msft_building.jfif)
+## Final Project Submission
+
+Please fill out: 
+* Student name: Daniel M. Smith
+* Student pace: full time online
+* Scheduled project review date/time: TBD
+* Instructor name: Abhineet Kulkarni
+* Blog post URL: https://danielmsmith1.medium.com/pivot-vs-pivottable-vs-groupby-2d8723beb782
+
+
+![msft_building.jfif](attachment:msft_building.jfif)
 
 # Microsoft Movie Studio Recommendation
 
-**Author**: [Daniel M Smith](mailto:danielmsmith1@gmail.com)
-
 ## Overview
 
-This project analyzes the ....
+This project analyzes movie data in order to create a portfolio strategy for entrance into the Entertainment industry.
 
 ## Business Problem
 
-![img](./images/image.png)
-
-The Microsoft studio  ...
+Microsoft sees all the big companies creating original video content and they want to get in on the fun. They have decided to create a new movie studio, but they don’t know anything about creating movies. You are charged with exploring what types of films are currently doing the best at the box office. You must then translate those findings into actionable insights that the head of Microsoft's new movie studio can use to help decide what type of films to create.
 
 ## Data
 
-The data was collected from IMDB bom Thnumbers box office mojo and contains....
+In the folder [zippedData](https://github.com/learn-co-curriculum/dsc-phase-1-project/tree/master/zippedData) are movie datasets from:
+
+- Box Office Mojo (Links to an external site.)
+- IMDB (Links to an external site.)
+- Rotten Tomatoes (Links to an external site.)
+- TheMovieDB (Links to an external site.)
+- The Numbers
+
+In the data directory, cleaned data was submitted with the github repo along with more data scraped from The Numbers
 
 ## Methods
 
-This project uses descriptive analysis, including description of trends over time. This provides a useful overview ....
+From the Production Budget perspective and WorldWide Gross perspective, recent data was pinpointed to focus on successful movies in the medium budget range.
+- Medium Range of Production Budgets 2M USD to 80M then capped at 65M
+- Whose ROI% was greater than 150% or 2.5 times the investment
+- Only recent movies since 2010
+- Comparing MPAA Ratings and investigating Sources of Content
+
+
 
 ## Results
 
-Some description of the results and next graph.
+Initial movie data shows that 65% of all movies are not successful.  We looked at the 533 which had an ROI% of >= 150%
 
-![name](./images/graph.png)
+![roiBoxplot.png](attachment:roiBoxplot.png)
 
-Another Some description of the results and next graph.
+Average ROI% of all Genres shows Horror,Mystery, and Thriller as top earners.
+![ax4_genre.png](attachment:ax4_genre.png)
 
-![name.png](./images/graph.png)
+Excluding movies with MPAA Rating of R or greater shows a differnet pictur and Horror and Drama actually rank the worst.
+![noR_genre.png](attachment:noR_genre.png)
 
 ## Conclusions
 
-This analysis leads to three recommendations for the Microsoft movie studio:
+Empower Studios Portfolio Strategy includes<br>
+- Embrace or Protect Brand Horror Mystery Thriller Highest ROI% <br>
+- Produce No R -Drama, Comedy and Romance, Disney Approach <br>
+- Produce 5 to 8 films per year in the <$20M budget Range <br>
+- Release in Summer or late Fall <br>
+- Looking for 50% Original Content 50% Book Source or Factual Events other
 
-- **recommendation 1.
-- **recommendation 2.
-- **recommendation 3
 
-### Next Steps
+## Next Steps
 
-Further analyses could yield additional insights to ...:
-
-- **More ideas.
-- **More ideas.
-- **Another idea.
+- Analysis of Successful Producers, Directors, Cinematographers, Actors
+- Associating critical rating with success
+- Academy Awards nominations with successful box office
 
 ## For More Information
 
-See the full analysis in the [Jupyter Notebook](./MovieData-analysis.ipynb) or review this [presentation](./MovieData_Presentation.pdf).
+See the full analysis in the [Jupyter Notebook](https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/code/eda_notebook.ipynb) or review this [presentation](https://github.com/SunTzuLombardi/MovieStudioCapstone/blob/main/presentation.pdf)
 
-For additional info, contact Daniel M. Smith at [danielmsmith1@gmail.com](mailto:danielmsmith@gmail.com)
-
-![logo](./images/anotherimage.jpg)
+For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 
 ## Repository Structure
 
-```
 ├── code
 │   ├── __init__.py
-│   ├── 
+│   ├── WebScrape_theNumbers.ipynb
 │   ├── initial_load_clean.ipynb
 │   └── eda_notebook.ipynb
 ├── data
 ├── images
 ├── __init__.py
 ├── README.md
-├── MovieData_Presentation.pdf
-└── MovieData_analysis.ipynb
+├── presentation.pdf
+└── student.ipynb
+
+
+```python
+
+```
+
+
+```python
+
 ```
