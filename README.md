@@ -48,8 +48,12 @@ Excluding movies with MPAA Rating of R or greater shows a differnet pictur and H
 ## Conclusions
 
 Empower Studios Portfolio Strategy includes<br>
-- Embrace or Protect Brand Horror Mystery Thriller Highest ROI% <br>
-- Produce No R -Drama, Comedy and Romance, Disney Approach <br>
+Either:
+Embrace R, Horror Mystery Thriller Highest ROI% <br> 
+OR<b>
+Protect Brand: Produce No R. Make Drama, Comedy and Romance, Disney Approach <br>
+  
+  Both Options:<br>
 - Produce 5 to 8 films per year in the <$20M budget Range <br>
 - Release in Summer or late Fall <br>
 - Looking for 50% Original Content 50% Book Source or Factual Events other
@@ -63,7 +67,7 @@ Empower Studios Portfolio Strategy includes<br>
 
 ## For More Information
 
-See the full analysis in the [Jupyter Notebook](https://github.com/SunTzuLombardi/MovieStudioProject/blob/main/code/eda_notebook.ipynb) or review this [presentation](https://github.com/SunTzuLombardi/MovieStudioProject/blob/main/presentation.pdf)
+See the full analysis in the [Jupyter Notebook](https://github.com/SunTzuLombardi/MovieStudioProject/blob/main/code/MovieStudoProject.ipynb) or review this [presentation](https://github.com/SunTzuLombardi/MovieStudioProject/blob/main/presentation.pdf)
 
 For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 
@@ -72,15 +76,13 @@ For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 ├── code<br>
 │   ├── __init__.py<br>
 │   ├── WebScrape_theNumbers.ipynb<br>
-│   ├── initial_load_clean.ipynb<br>
-│   └── eda_notebook.ipynb<br>
 ├── data<br>
 ├── images<br>
 ├── __init__.py<br>
-├── student.ipynb<br>
 ├── README.md<br>
 ├── presentation.pdf<br>
 ├── gitbhub.pdf<br>
-└── notebook.pdf<br>
+├── notebook_MovieStudoProject.pdf<br>
+├── MovieStudoProject.ipynb<br>
 
 
