@@ -77,7 +77,10 @@ For additional info, contact Daniel M. Smith at danielmsmith1@gmail.com
 ├── data<br>
 ├── images<br>
 ├── __init__.py<br>
+├── student.ipynb<br>
 ├── README.md<br>
 ├── presentation.pdf<br>
-└── student.ipynb<br>
+├── gitbhub.pdf<br>
+└── notebook.pdf<br>
+
 
